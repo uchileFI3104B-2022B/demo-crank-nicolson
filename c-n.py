@@ -23,8 +23,16 @@ x = np.linspace(0, 1, N)
 T = np.sin(np.pi * x)  # Condicion inicial, tambien la solucion que buscamos
 
 
-# Definiendo matriz tridiagonal
+# Discretizacion del tiempo
 epsilon = 0.1  # delta t adimensionalizado, partimos con numero arbitrario
+N_temporales = 10
+
+# En el siguiente vector se guardaran las soluciones en cada instante
+T_solucion = np.zeros((N_temporales, N))
+T_solucion[0] = T
+
+
+# Definiendo matriz tridiagonal
 s = epsilon / 2 / h**2
 
 # shape de la matriz
@@ -46,27 +54,27 @@ S_derecha = diags(
             offsets=[1, 0, -1])
 
 
-# Implementando un paso temporal
-# Calculamos el vector b (lado derecho de la ec. de C-N)
-b = S_derecha @ T[1:-1]
-b[0] = b[0] + s * T[0]   # valido para condiciones de borde rigidas
-b[-1] = b[-1] + s * T[-1]
+for i in range(1, N_temporales):
+    # Implementando un paso temporal
+    # Calculamos el vector b (lado derecho de la ec. de C-N)
+    b = S_derecha @ T_solucion[i-1, 1:-1]
+    b[0] = b[0] + s * T_solucion[i-1, 0]   # valido para condiciones de borde rigidas
+    b[-1] = b[-1] + s * T_solucion[i-1, -1]
 
-# Ahora el problema a resolver es S @ T = b; despejar T
-T_new = T.copy()  # guardamos los valores previos de T
-T_new[1:-1] = solve(S, b)
-
+    # Ahora el problema a resolver es S @ T = b; despejar T
+    T_solucion[i, 1:-1] = solve(S, b)
 
 
 # Visualizacion de la condicion inicial
 plt.figure(1)
 plt.clf()
-plt.plot(x, T, '-', label='T(t=0, x)')
-plt.plot(x, T_new, '-', label='T(t=0.1, x)')
+
+for i in range(N_temporales):
+    plt.plot(x, T_solucion[i], '-', label='T(t={:.3f}, x)'.format(i * epsilon))
 
 plt.xlabel('x')
 plt.ylabel('T(x)')
 plt.legend()
 plt.show()
-plt.savefig('primera-iteracion.png')
+plt.savefig('solucion-10-pasos-temporales.png')
 
