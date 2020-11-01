@@ -26,7 +26,6 @@ epsilon = 0.1  # delta t adimensionalizado, partimos con numero arbitrario
 s = epsilon / 2 / h**2
 
 # shape de la matriz
-shape = (N-2, N-2)
 diagonal = np.ones(N-2) * (2*s + 1)
 off_diagonals = np.ones(N-3) * (-s)
 S = diags([off_diagonals, diagonal, off_diagonals], offsets=[1, 0, -1])
@@ -34,6 +33,15 @@ S = diags([off_diagonals, diagonal, off_diagonals], offsets=[1, 0, -1])
 # Para visualizar la matriz S se puede hacer:
 # S.toarray()
 # pero conviene mantenerla como una "sparse matrix" para eficiencia
+
+# Al lado derecho tambien vamos a necesitar una matriz tri-diagonal para
+# calcular los elementos del vector b
+diagonal_derecha = np.ones(N-2) * (1 - 2*s)
+off_diagonals_derecha = np.ones(N-3) * (s)
+S_derecha = diags(
+            [off_diagonals_derecha, diagonal_derecha, off_diagonals_derecha],
+            offsets=[1, 0, -1])
+
 
 
 # Visualizacion de la condicion inicial
