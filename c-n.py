@@ -16,7 +16,7 @@ from scipy.linalg import solve  # to solve S @ T = b, solve for T
 
 
 # Discretizacion del espacio
-N = 5  # numero de puntos a evaluar en el espacio
+N = 51  # numero de puntos a evaluar en el espacio
 h = 1 / (N-1)  # delta x
 
 x = np.linspace(0, 1, N)
@@ -24,8 +24,8 @@ T = np.sin(np.pi * x)  # Condicion inicial, tambien la solucion que buscamos
 
 
 # Discretizacion del tiempo
-epsilon = 0.1  # delta t adimensionalizado, partimos con numero arbitrario
-N_temporales = 10
+epsilon = 0.01  # delta t adimensionalizado, partimos con numero arbitrario
+N_temporales = 30
 
 # En el siguiente vector se guardaran las soluciones en cada instante
 T_solucion = np.zeros((N_temporales, N))
@@ -69,12 +69,12 @@ for i in range(1, N_temporales):
 plt.figure(1)
 plt.clf()
 
-for i in range(N_temporales):
+for i in range(0, N_temporales, 3):
     plt.plot(x, T_solucion[i], '-', label='T(t={:.3f}, x)'.format(i * epsilon))
 
 plt.xlabel('x')
 plt.ylabel('T(x)')
 plt.legend()
 plt.show()
-plt.savefig('solucion-10-pasos-temporales.png')
+plt.savefig('soluciones-con-mejor-resolucion.png')
 
